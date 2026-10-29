@@ -1,4 +1,11 @@
-from banco import adicionar_livro, buscar_livros, conectar, listar_livros
+from banco import (
+    adicionar_livro,
+    atualizar_livro,
+    buscar_livros,
+    conectar,
+    listar_livros,
+    remover_livro,
+)
 
 
 def mostrar(livros) -> None:
@@ -13,7 +20,10 @@ def main() -> None:
     conexao = conectar()
     try:
         while True:
-            print("\n1. Adicionar livro\n2. Listar livros\n3. Buscar\n0. Sair")
+            print(
+                "\n1. Adicionar livro\n2. Listar livros\n3. Buscar"
+                "\n4. Editar livro\n5. Excluir livro\n0. Sair"
+            )
             opcao = input("Opção: ").strip()
             if opcao == "1":
                 titulo = input("Título: ")
@@ -28,6 +38,27 @@ def main() -> None:
                 mostrar(listar_livros(conexao))
             elif opcao == "3":
                 mostrar(buscar_livros(conexao, input("Título ou autor: ")))
+            elif opcao == "4":
+                try:
+                    livro_id = int(input("ID do livro: "))
+                    titulo = input("Novo título: ")
+                    autor = input("Novo autor: ")
+                    ano = int(input("Novo ano: "))
+                    mensagem = "Livro atualizado." if atualizar_livro(
+                        conexao, livro_id, titulo, autor, ano
+                    ) else "Livro não encontrado."
+                    print(mensagem)
+                except ValueError as erro:
+                    print(f"Dados inválidos: {erro}")
+            elif opcao == "5":
+                try:
+                    livro_id = int(input("ID do livro: "))
+                    mensagem = "Livro excluído." if remover_livro(
+                        conexao, livro_id
+                    ) else "Livro não encontrado."
+                    print(mensagem)
+                except ValueError:
+                    print("Digite um ID numérico.")
             elif opcao == "0":
                 break
             else:
@@ -38,3 +69,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
