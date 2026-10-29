@@ -39,3 +39,27 @@ def buscar_livros(conexao: sqlite3.Connection, termo: str) -> list[sqlite3.Row]:
         "SELECT * FROM livros WHERE titulo LIKE ? OR autor LIKE ? ORDER BY titulo",
         (termo_busca, termo_busca),
     ).fetchall()
+
+
+def atualizar_livro(
+    conexao: sqlite3.Connection,
+    livro_id: int,
+    titulo: str,
+    autor: str,
+    ano: int,
+) -> bool:
+    if not titulo.strip() or not autor.strip():
+        raise ValueError("Título e autor são obrigatórios.")
+    cursor = conexao.execute(
+        "UPDATE livros SET titulo = ?, autor = ?, ano = ? WHERE id = ?",
+        (titulo.strip(), autor.strip(), ano, livro_id),
+    )
+    conexao.commit()
+    return cursor.rowcount > 0
+
+
+def remover_livro(conexao: sqlite3.Connection, livro_id: int) -> bool:
+    cursor = conexao.execute("DELETE FROM livros WHERE id = ?", (livro_id,))
+    conexao.commit()
+    return cursor.rowcount > 0
+
